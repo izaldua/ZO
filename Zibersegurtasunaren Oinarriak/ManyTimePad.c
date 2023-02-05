@@ -5,8 +5,11 @@ int hexToDec(unsigned char hex[]);
 
 int main()
 {
-
     unsigned char zifratu[116][14];
+
+    for (int i = 0; i < 116; i++)
+        for (int j = 0; j < 14; j++)
+            zifratu[i][j] = 0;
 
     unsigned char c0[116] = "1a1617451a411517490b061b0f08535404044e17450c1c45326222420a00340006544816170b54030b55020d530046";
     unsigned char c1[116] = "184f184f0a081a000016071a00010017090b00100416010054530e060c52301b0c000a131304430e0a0640";
@@ -41,52 +44,91 @@ int main()
         zifratu[i][13] = c13[i];
     }
 
+    int zifratuDec[58][14];
+
+    for (int i = 0; i < 115; i = i + 2)
+    {
+        for (int j = 0; j < 14; j++)
+        {
+            unsigned char lag[2];
+
+            lag[0] = zifratu[i][j];
+            lag[1] = zifratu[i + 1][j];
+
+            int dec = hexToDec(lag);
+
+            zifratuDec[i / 2][j] = dec;
+        }
+    }
+
     int tarteak[58][14];
 
     for (int i = 0; i < 58; i++)
         for (int j = 0; j < 14; j++)
             tarteak[i][j] = 0;
 
-    for (int i = 0; i < 14; i++)
+    for (int i = 0; i < 58; i++)
     {
-        int a = 0;
-        for (int j = 0; j < 116; j + 2)
+        for (int j = 0; j < 14; j++)
         {
-            a++;
             for (int z = 0; z < 14; z++)
             {
-                if (i != z)
+                if (j != z)
                 {
-                    unsigned char lag1[2];
-                    unsigned char lag2[2];
-
-                    lag1[0] = zifratu[i][j];
-                    lag1[1] = zifratu[i][j + 1];
-                    lag2[0] = zifratu[z][j];
-                    lag2[1] = zifratu[z][j + 1];
-
-                    int x = hexToDec(lag1);
-                    int y = hexToDec(lag2);
-
-                    int binary = x ^ y;
-
-                    if (binary > 64 && binary < 91)
+                    int lag1 = zifratuDec[i][j] ^ zifratuDec[i][z];
+                    if (lag1 > 64 && lag1 < 91)
                     {
-                        tarteak[a][i];
-                        tarteak[a][z];
+                        tarteak[i][j]++;
+                        tarteak[i][z]++;
                     }
-                    else if (binary > 96 && binary < 122)
+                    else if (lag1 > 96 && lag1 < 123)
                     {
-                        tarteak[a][i];
-                        tarteak[a][z];
+                        tarteak[i][j]++;
+                        tarteak[i][z]++;
                     }
                 }
             }
         }
     }
 
-    // Matrix of up matrixes
-    // los xor
+    int gakoa[58];
+
+    for (int i = 0; i < 58; i++)
+    {
+        int max = 0;
+
+        for (int j = 0; j < 14; j++)
+        {
+            if (tarteak[i][j] > tarteak[i][max])
+            {
+                max = j;
+            }
+        }
+
+        int lag2 = zifratuDec[i][max] ^ 32;
+
+        if (i < 30)
+        {
+            gakoa[i] = lag2;
+        }
+        else
+        {
+            gakoa[i] = gakoa[i-30];
+        }
+
+        printf("%c", gakoa[i]);
+    }
+
+    for (int i = 0; i < 14; i++)
+    {
+        printf("\n\nm%d mezua: ", i);
+        for (int j = 0; j < 58; j++)
+        {
+            printf("%c", gakoa[j] ^ zifratuDec[j][i]);
+        }
+    }
+
+    printf("\n\n");
 
     return 0;
 }
@@ -110,5 +152,6 @@ int hexToDec(unsigned char hex[])
     {
         buelta += (hex[1] - 87);
     }
+
     return buelta;
 }
