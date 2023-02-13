@@ -211,7 +211,7 @@ void search_ni(int64_t n_key_mask, int64_t *key_mask, int64_t n_plaintext_mask, 
         key[29] = c;
         key[28] = d;
 
-        //printf("%d%d%d%d\n", key[28], key[29], key[30], key[31]);
+        // printf("%d%d%d%d\n", key[28], key[29], key[30], key[31]);
 
         enc_256_CBC(plain_text, test_result, key, iv, 1); // con aes_ni cypher as cypher
 
@@ -219,10 +219,9 @@ void search_ni(int64_t n_key_mask, int64_t *key_mask, int64_t n_plaintext_mask, 
         {
             printf("SUCCESS!\n");
             buk = 1;
-            for (int z = 0; z < n_key_mask; z++)//n_key_mask aldatu
+            for (int z = 0; z < 32; z++) // n_key_mask aldatu
             {
                 printf("%c", key[z]);
-                
             }
             printf("\n");
         }
@@ -237,7 +236,7 @@ void search_ni(int64_t n_key_mask, int64_t *key_mask, int64_t n_plaintext_mask, 
                 {
                     c = 0;
                     d++;
-                    printf("%d\n", d);
+                    // printf("%d\n", d);
                 }
                 else
                 {
@@ -255,26 +254,50 @@ void search_ni(int64_t n_key_mask, int64_t *key_mask, int64_t n_plaintext_mask, 
         }
     }
 
-    a = 255;
-    b = 255;
-    c = 255;
-    d = 255;
-   
-    key[31] = a;
-    key[30] = b;
-    key[29] = c;
-    key[28] = d;
-
-    enc_256_CBC(plain_text, test_result, key, iv, 1); // con aes_ni cypher as cypher
-
-    if (0 == memcmp(cypher_text, test_result, 16))
+    if (buk == 0)
     {
-        printf("SUCCESS!\n");
-        for (int z = 0; z < n_key_mask; z++)
+        a = 255;
+        b = 255;
+        c = 255;
+        d = 255;
+
+        key[31] = a;
+        key[30] = b;
+        key[29] = c;
+        key[28] = d;
+
+        enc_256_CBC(plain_text, test_result, key, iv, 1); // con aes_ni cypher as cypher
+
+        if (0 == memcmp(cypher_text, test_result, 16))
         {
-            printf("%c", key[z]);
+            printf("SUCCESS!\n");
+            for (int z = 0; z < 32; z++)
+            {
+                buk = 1;
+                printf("%c", key[z]);
+            }
         }
     }
+
+    /*
+        if (buk == 1)
+        {
+            int nbocks = 588;
+            unsigned char testResult[588 * 16];
+            dec_256_CBC(testResult, plain_text, key, iv, nbocks);
+
+            printf("\n\n");
+
+            for (int i = 0; i < 588 * 16; i++)
+            {
+                printf("%d", testResult[i]);
+            }
+
+            printf("\n\n");
+
+            printf("AES-CBC-256 Successful\n");
+        }
+    */
 }
 
 int main(int argc, char *argv[])
@@ -319,6 +342,6 @@ int main(int argc, char *argv[])
     printf("Key mask length: %ld\n", n_key_mask);
     printf("Plaintext mask length: %ld\n", n_plaintext_mask);
 
-    //search(n_key_mask, key_mask, n_plaintext_mask, plaintext_mask, key, plain_text, cypher_text);
+    // search(n_key_mask, key_mask, n_plaintext_mask, plaintext_mask, key, plain_text, cypher_text);
     search_ni(n_key_mask, key_mask, n_plaintext_mask, plaintext_mask, key, plain_text, cypher_text);
 }
