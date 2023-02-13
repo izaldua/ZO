@@ -201,51 +201,30 @@ void search_ni(int64_t n_key_mask, int64_t *key_mask, int64_t n_plaintext_mask, 
     int b = 0;
     int c = 0;
     int d = 0;
-    while (d != 255)
+    int buk = 0;
+    unsigned char test_result[BLOCK_SIZE];
+
+    while (d != 255 && buk == 0)
     {
-        unsigned char plain_text_prima1[n_plaintext_mask];
-        unsigned char plain_text_prima2[n_plaintext_mask];
-        for (int i = 0; i < n_plaintext_mask; i++)
-        {
-            plain_text_prima1[i] = plain_text[i];
-            plain_text_prima2[i] = plain_text[i];
-        }
+        key[31] = a;
+        key[30] = b;
+        key[29] = c;
+        key[28] = d;
 
-        unsigned char cypher_text_prima1[n_plaintext_mask];
-        unsigned char cypher_text_prima2[n_plaintext_mask];
-        for (int i = 0; i < n_plaintext_mask; i++)
-        {
-            cypher_text_prima1[i] = cypher_text[i];
-            cypher_text_prima2[i] = cypher_text[i];
-        }
+        //printf("%d%d%d%d\n", key[28], key[29], key[30], key[31]);
 
-        unsigned char key_prima[n_key_mask];
-        for (int i = 0; i < n_key_mask; i++)
-        {
-            key_prima[i] = key[i];
-        }
+        enc_256_CBC(plain_text, test_result, key, iv, 1); // con aes_ni cypher as cypher
 
-        unsigned char iv_ni[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-
-        key_prima[31] = a;
-        key_prima[30] = b;
-        key_prima[29] = c;
-        key_prima[28] = d;
-
-        // printf("%d%d%d%d\n", key_prima[28], key_prima[29], key_prima[30], key_prima[31]);
-
-        // struct AES_ctx ctx;
-
-        dec_256_CBC(cypher_text_prima1, plain_text_prima1, key_prima, iv_ni, 16); // con aes_ni cypher as cypher
-        // dec_256_CBC(plain_text_prima2, cypher_text_prima2, key_prima, iv_ni, 16); //con aes_ni cypher as plainText
-
-        if (0 == memcmp(cypher_text, plain_text_prima1, 16))
+        if (0 == memcmp(cypher_text, test_result, 16))
         {
             printf("SUCCESS!\n");
-            for (int z = 0; z < n_key_mask; z++)
+            buk = 1;
+            for (int z = 0; z < n_key_mask; z++)//n_key_mask aldatu
             {
-                key[z] = key_prima[z];
+                printf("%c", key[z]);
+                
             }
+            printf("\n");
         }
 
         if (a == 255)
@@ -258,6 +237,7 @@ void search_ni(int64_t n_key_mask, int64_t *key_mask, int64_t n_plaintext_mask, 
                 {
                     c = 0;
                     d++;
+                    printf("%d\n", d);
                 }
                 else
                 {
@@ -274,55 +254,25 @@ void search_ni(int64_t n_key_mask, int64_t *key_mask, int64_t n_plaintext_mask, 
             a++;
         }
     }
-    // Hacer la ultima iteracion con 255 255 255 255
 
     a = 255;
     b = 255;
     c = 255;
     d = 255;
+   
+    key[31] = a;
+    key[30] = b;
+    key[29] = c;
+    key[28] = d;
 
-    unsigned char plain_text_prima1[n_plaintext_mask];
-    unsigned char plain_text_prima2[n_plaintext_mask];
-    for (int i = 0; i < n_plaintext_mask; i++)
-    {
-        plain_text_prima1[i] = plain_text[i];
-        plain_text_prima2[i] = plain_text[i];
-    }
+    enc_256_CBC(plain_text, test_result, key, iv, 1); // con aes_ni cypher as cypher
 
-    unsigned char cypher_text_prima1[n_plaintext_mask];
-    unsigned char cypher_text_prima2[n_plaintext_mask];
-    for (int i = 0; i < n_plaintext_mask; i++)
-    {
-        cypher_text_prima1[i] = cypher_text[i];
-        cypher_text_prima2[i] = cypher_text[i];
-    }
-
-    unsigned char key_prima[n_key_mask];
-    for (int i = 0; i < n_key_mask; i++)
-    {
-        key_prima[i] = key[i];
-    }
-
-    unsigned char iv_ni[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-
-    key_prima[31] = a;
-    key_prima[30] = b;
-    key_prima[29] = c;
-    key_prima[28] = d;
-
-    // printf("%d%d%d%d\n", key_prima[28], key_prima[29], key_prima[30], key_prima[31]);
-
-    // struct AES_ctx ctx;
-
-    dec_256_CBC(cypher_text_prima1, plain_text_prima1, key_prima, iv_ni, 16); // con aes_ni cypher as cypher
-    //dec_256_CBC(plain_text_prima2, cypher_text_prima2, key_prima, iv_ni, 16); // con aes_ni cypher as plainText
-
-    if (0 == memcmp(cypher_text, plain_text_prima1, 16))
+    if (0 == memcmp(cypher_text, test_result, 16))
     {
         printf("SUCCESS!\n");
         for (int z = 0; z < n_key_mask; z++)
         {
-            key[z] = key_prima[z];
+            printf("%c", key[z]);
         }
     }
 }
