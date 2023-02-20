@@ -1,7 +1,7 @@
 #ifndef DIFFIE_HELLMAN_EXCHANGE_H
 #define DIFFIE_HELLMAN_EXCHANGE_H
 
-#define DH_KEY_LENGTH	(16)
+#define DH_KEY_LENGTH (16)
 
 typedef unsigned char DH_KEY[DH_KEY_LENGTH];
 
