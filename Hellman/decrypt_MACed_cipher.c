@@ -133,8 +133,9 @@ void HMAC_SHA256(uint8_t *key, int size_k, uint8_t *m, int size_m, uint8_t *HMAC
     // concatenar mezu e ipad, usar eso aqui abajo
 
     SHA256_CTX ctx;
-    uint8_t preHMAC;
-    memcpy(&kIpad[64-size_m], &m[size_m], size_m);
+    uint8_t preHMAC[32];
+ 
+    memcpy(&kIpad[64-size_m], &m, size_m); //Print batekin begiratu ondo konkatenatu den
 
     sha256_init(&ctx);
     sha256_update(&ctx, kIpad, 64);
@@ -143,7 +144,7 @@ void HMAC_SHA256(uint8_t *key, int size_k, uint8_t *m, int size_m, uint8_t *HMAC
     // concatenar lo que hemos reciobido con el opad, meterlo abajo ta jasotakoa HMAC da
 
 
-    memcpy(&kOpad[512-64], &preHMAC[64], 64);
+    memcpy(&kOpad[512-256], &preHMAC, 256);
 
     sha256_init(&ctx);
     sha256_update(&ctx, preHMAC, 512);
