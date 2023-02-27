@@ -135,7 +135,17 @@ void HMAC_SHA256(uint8_t *key, int size_k, uint8_t *m, int size_m, uint8_t *HMAC
     SHA256_CTX ctx;
     uint8_t preHMAC[32];
  
-    memcpy(&kIpad[64-size_m], &m, size_m); //Print batekin begiratu ondo konkatenatu den
+printf("\n");
+printf("\n");
+printf("\n");
+
+    memccpy(&kIpad[64-size_m], &m, '\0',size_m); //Print batekin begiratu ondo konkatenatu den
+    for (int i = 0; i< 64; i++){
+        printf("%d", kIpad[i]);
+    }
+    printf("\n");
+    printf("\n");
+    printf("\n");
 
     sha256_init(&ctx);
     sha256_update(&ctx, kIpad, 64);
